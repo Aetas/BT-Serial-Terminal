@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Furst App</string>
     <string name="edit_message">Enter a message</string>
-    <string name="button_send">Send</string>
     <string name="red_button">Red</string>
     <string name="green_button">Green</string>
     <string name="blue_button">Blue</string>
     <string name="bt_connect" />
+    <string name="button_send">SEND</string>
 </resources>
