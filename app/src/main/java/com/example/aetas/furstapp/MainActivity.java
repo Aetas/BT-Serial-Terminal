@@ -20,6 +20,7 @@ import app.akexorcist.bluetotohspp.library.DeviceList;
 
 
 public class MainActivity extends AppCompatActivity {
+
     BluetoothSPP bt;
     private Timer myTimer;
 
@@ -48,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
         bt = new BluetoothSPP(getApplicationContext());
         myTimer = new Timer();
 
-        //final AnimationDrawable animationDrawable = new AnimationDrawable();
-
         myTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -67,30 +66,38 @@ public class MainActivity extends AppCompatActivity {
         //Real ghetto that is.
         red_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                if (bt.isBluetoothAvailable()){
+                if (bt.getServiceState() == BluetoothState.STATE_CONNECTED){
                     bt.send("red", true);   //return line is appended because the uController is looking for them to do a match check
+                } else {
+                    Toast.makeText(getApplicationContext(), "No device connected", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         blue_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                if (bt.isBluetoothAvailable()){
+                if (bt.getServiceState() == BluetoothState.STATE_CONNECTED){
                     bt.send("blue", true);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No device connected", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         green_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                if (bt.isBluetoothAvailable()){
+                if (bt.getServiceState() == BluetoothState.STATE_CONNECTED){
                     bt.send("green", true);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No device connected", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         button_send.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                if (bt.isBluetoothAvailable()){
+                if (bt.getServiceState() == BluetoothState.STATE_CONNECTED){
                     bt.send(edit_message.getText().toString(), true);   //grabs the text in the text box and casts to string
+                } else {
+                    Toast.makeText(getApplicationContext(), "No device connected", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -98,32 +105,24 @@ public class MainActivity extends AppCompatActivity {
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
             public void onDataReceived(byte[] data, String message) {
                 // Do something when data incoming
+                //probs throw into a toast or something
             }
         });
 
-
-        //flash 'connected to <device>' when connecting, etc.
         bt.setBluetoothStateListener(new BluetoothSPP.BluetoothStateListener() {
             public void onServiceStateChanged(int state) {
-                Context context = getApplicationContext();
-                CharSequence text = "unset";
-                int duration = Toast.LENGTH_SHORT;
                 if(state == BluetoothState.STATE_CONNECTED) {
                     // Do something when successfully connected
-                    text = "Connected to <append device";
-                    Toast.makeText(context, text, duration).show();
+                    Toast.makeText(getApplicationContext(), "Connected to device", Toast.LENGTH_SHORT).show();
                 } else if(state == BluetoothState.STATE_CONNECTING) {
                     // Do something while connecting
-                    text = "Connecting to <append device";
-                    Toast.makeText(context, text, duration).show();
+                    Toast.makeText(getApplicationContext(), "Connecting to device", Toast.LENGTH_SHORT).show();
                 } else if(state == BluetoothState.STATE_LISTEN) {
                     // Do something when device is waiting for connection
-                    text = "Listening to <append device";
-                    Toast.makeText(context, text, duration).show();
+                    Toast.makeText(getApplicationContext(), "Listening to device", Toast.LENGTH_SHORT).show();
                 } else if(state == BluetoothState.STATE_NONE) {
                     // Do something when device don't have any connection
-                    text = "No State";
-                    Toast.makeText(context, text, duration).show();
+                    Toast.makeText(getApplicationContext(), "No State", Toast.LENGTH_SHORT).show();
                 }
         }});
 
@@ -137,10 +136,10 @@ public class MainActivity extends AppCompatActivity {
         } else if(requestCode == BluetoothState.REQUEST_ENABLE_BT) {
             if(resultCode == Activity.RESULT_OK) {
                 bt.setupService();
-                bt.startService(BluetoothState.DEVICE_ANDROID);
-                //setup();
+                bt.startService(BluetoothState.DEVICE_OTHER);
             } else {
                 // Do something if user doesn't choose any device (Pressed back)
+                Toast.makeText(getApplicationContext(), "No device selected", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -150,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
         //pass immediately to the gui thread
         this.runOnUiThread(Timer_Tick);
     }
-
     //things in here are run on the GUI thread
     private Runnable Timer_Tick = new Runnable(){
         public void run(){
