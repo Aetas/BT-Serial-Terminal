@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
 
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
             public void onDataReceived(byte[] data, String message) {
+                CharSequence text = message;
+                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
                 // Do something when data incoming
                 //probs throw into a toast or something
             }
@@ -130,18 +132,24 @@ public class MainActivity extends AppCompatActivity {
 
     //this might be a problem child down the road
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Toast.makeText(getApplicationContext(), "enter intent", Toast.LENGTH_SHORT).show();
         if(requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) {
-            if(resultCode == Activity.RESULT_OK)
+            if(resultCode == Activity.RESULT_OK) {
                 bt.connect(data);
+                Toast.makeText(getApplicationContext(), "connect", Toast.LENGTH_SHORT).show();
+            }
+            Toast.makeText(getApplicationContext(), "request connect", Toast.LENGTH_SHORT).show();
         } else if(requestCode == BluetoothState.REQUEST_ENABLE_BT) {
             if(resultCode == Activity.RESULT_OK) {
                 bt.setupService();
                 bt.startService(BluetoothState.DEVICE_OTHER);
+                Toast.makeText(getApplicationContext(), "request enable", Toast.LENGTH_SHORT).show();
             } else {
                 // Do something if user doesn't choose any device (Pressed back)
-                Toast.makeText(getApplicationContext(), "No device selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "how did we get here", Toast.LENGTH_SHORT).show();
             }
         }
+        Toast.makeText(getApplicationContext(), "No device selected", Toast.LENGTH_SHORT).show();
     }
 
     //things here are run in the timer thread
